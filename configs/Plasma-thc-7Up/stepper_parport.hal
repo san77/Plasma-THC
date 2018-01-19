@@ -1,0 +1,115 @@
+############################# Parallel Ports ##############################################
+
+# Load Driver for Two Parallel Ports, one for Breakout Board, other for Plasma Torch Height Control
+#загрузить драйверы для 2 lpt один - для перемещений, другой для THC
+# пока для одного для второго аналогично
+#loadrt probe_parport
+loadrt hal_parport cfg="0x378 out 0xe900 out"
+setp parport.0.reset-time 5000
+
+# Connect both Paralell Ports to Threads for Read / Write
+# а здесь походу уже для 2 портов сделано
+addf parport.0.read base-thread
+addf parport.0.write base-thread
+addf parport.0.reset base-thread
+addf parport.1.read base-thread
+addf parport.1.write base-thread
+
+# Invert pins to make motors move in right direction
+###########################
+#тут подключние пинов  мжет чего накосячил...
+###########################
+
+
+#net estop-out => parport.0.pin-01-out
+setp parport.0.pin-02-out-invert 1
+net xstep => parport.0.pin-02-out
+setp parport.0.pin-02-out-reset 1
+
+setp parport.0.pin-03-out-invert 1
+net xdir => parport.0.pin-03-out
+
+setp parport.0.pin-04-out-invert 1
+net ystep => parport.0.pin-04-out
+setp parport.0.pin-04-out-reset 1
+
+setp parport.0.pin-05-out-invert 1
+net ydir => parport.0.pin-05-out
+
+setp parport.0.pin-06-out-invert 1
+net zstep => parport.0.pin-06-out
+setp parport.0.pin-06-out-reset 1
+
+net zdir => parport.0.pin-07-out
+
+
+#net astep => parport.0.pin-08-out
+#net adir => parport.0.pin-09-out
+#setp parport.0.pin-08-out-reset 1
+
+setp parport.0.pin-14-out-invert 1
+net spindle-cw => parport.0.pin-14-out
+net spindle-pwm => parport.0.pin-16-out
+
+net EnableX => parport.0.pin-17-out
+
+
+
+######################################
+
+
+# Axis A and Y are the same axis but different motors 
+# тут думать      нада
+
+# Hook up limit and home switches, each axis shares a common pin for homing, limit min and limit max
+###############################
+#лимиты пробник и цифровые
+###############################
+#net probe-in => motion.probe-input
+#net probe-in <= parport.1.pin-12-in
+net FloatSwitch <= parport.1.pin-12-in
+
+net ExtEStop parport.0.pin-10-in
+
+net both-home-x => axis.0.home-sw-in
+net both-home-x => axis.0.neg-lim-sw-in
+net both-home-x => axis.0.pos-lim-sw-in
+
+net both-home-x <= parport.0.pin-12-in
+
+net both-home-y => axis.1.home-sw-in
+net both-home-y => axis.1.neg-lim-sw-in
+net both-home-y => axis.1.pos-lim-sw-in
+#!!!!!!!!!!!!!!!!!!!!!!!
+net both-home-y <= parport.0.pin-13-in
+
+#Тут присвоен оганичитель сверху по Z 
+# все остальное заремлено поскольку 
+# 0 z выставляется пробником
+#net both-home-z => axis.2.home-sw-in
+#net both-home-z => axis.2.neg-lim-sw-in
+#net both-home-z => axis.2.pos-lim-sw-in
+#net both-home-z <= parport.0.pin-15-in
+#net both-home-z <= parport.0.pin-15-in-not
+
+###################################
+# сигналы THC
+###################################
+
+net TorchOn parport.1.pin-08-out
+net ArcOK <= parport.1.pin-15-in-not
+net MoveDown <= parport.1.pin-11-in-not
+net MoveUp <= parport.1.pin-13-in-not
+
+#net din-01 => motion.digital-in-01
+#net din-02 => motion.digital-in-02
+#net all-limit <= parport.0.pin-10-in
+#net all-home <= parport.0.pin-11-in
+
+#net din-01 <= parport.1.pin-10-in
+#net din-02 <= parport.1.pin-11-in
+#net probe-in <= parport.1.pin-12-in
+#################################
+
+# Limit switches handled by simulator code, see simulator.hal
+# Z axis Limit switch handled by THC, see thc.hal
