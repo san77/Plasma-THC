@@ -1,0 +1,250 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pyvcp>
+	<labelframe text="Signals"> 
+		<hbox>
+			<vbox>
+				<led> 
+					<halpin>"Led-FloatSwitch"</halpin>  
+					<size>20</size>  
+					<on_color>"blue"</on_color> 
+					<off_color>"grey"</off_color> 
+				</led>
+				<led> 
+					<halpin>"Led-TorchOn"</halpin>  
+					<size>20</size>  
+					<on_color>"yellow"</on_color> 
+					<off_color>"grey"</off_color> 
+				</led>
+				<led> 
+					<halpin>"Led-ArcOK"</halpin>  
+					<size>20</size>  
+					<on_color>"green"</on_color> 
+					<off_color>"grey"</off_color> 
+				</led>
+				<led> 
+					<halpin>"Led-ExtEStop"</halpin>  
+					<size>20</size>  
+					<on_color>"red"</on_color> 
+					<off_color>"grey"</off_color> 
+				</led>
+			</vbox>
+			<vbox>
+				<label text="Датчик поверхности"/> 
+				<label text="ВКЛ.Горелку"/> 
+				<label text="ДУГА"/> 
+				<label text="Внеш АВАРИЯ"/> 
+			</vbox>
+		</hbox>
+	</labelframe>
+	<labelframe text="Подстройка"> 
+		<vbox>
+			<hbox>
+				<vbox>
+					<led> 
+						<halpin>"Led-MoveUp"</halpin>  
+						<size>20</size>  
+						<on_color>"green"</on_color> 
+						<off_color>"grey"</off_color> 
+					</led>
+					<led> 
+						<halpin>"Led-MoveDown"</halpin>  
+						<size>20</size>  
+						<on_color>"green"</on_color> 
+						<off_color>"grey"</off_color> 
+					</led>
+				</vbox>
+	
+				<vbox>
+					<label text="ВВЕРХ"/> 
+					<label text="ВНИЗ"/> 
+				</vbox>
+			</hbox>
+			<hbox>
+			   <vbox>
+				<label text="ШАГ подстройки"/> 
+                                <label text="Высота перемещения"/>
+				<label text="Высота реза             "/> 
+			   </vbox>
+                           <vbox>
+				<spinbox>
+					<halpin>"Spin-THCStepSize"</halpin>
+					<min_>0.00</min_>
+					<max_>1</max_>
+					<initval>0.05</initval>
+					<width>"6"</width>
+					<resolution>.01</resolution>
+					<format>"5.3f"</format>
+					<justify>RIGHT</justify>
+				</spinbox>
+			        <spinbox>
+					<halpin>"Spin-TravelHeight"</halpin>
+					<min_>0</min_>
+					<max_>10</max_>
+					<initval>0</initval>
+					<width>"3"</width>
+					<resolution>1</resolution>
+					<format>"3.0f"</format>
+					<justify>RIGHT</justify>
+				</spinbox>
+				<spinbox>
+					<halpin>"Spin-SwitchTravel"</halpin>
+					<min_>0</min_>
+					<max_>50</max_>
+					<initval>3</initval>
+					<width>"5"</width>
+					<resolution>.01</resolution>
+					<format>"5.2f"</format>
+					<justify>RIGHT</justify>
+				</spinbox>
+			   </vbox>
+			</hbox>
+
+		</vbox>
+	</labelframe>
+	<labelframe text="Прокол"> 
+		<vbox>
+			<vbox>
+				<hbox>
+					<relief>RIDGE</relief>
+					<bd>1</bd>
+					<label text="Полная задержка"/> 
+					<number> 
+						<halpin>"Num-PierceDelayTimer"</halpin> 
+						<format>"+4.2f"</format> 
+					</number>
+				</hbox>
+				<hbox>
+					<vbox>
+						<label text="Задержка на прокол"/> 
+						<label text="Высота начала дуги"/>
+						<label text="Подпрыжка"/>
+						<label text="Таймаут дуги "/> 
+						<label text="Автозапуск прокола"/>
+						<label text="Без дуги"/>
+						<label text="Только THC"/>
+					</vbox>
+					<vbox>
+						<spinbox>
+							<halpin>"Spin-PierceDelay"</halpin>
+							<min_>0.0</min_>
+							<max_>10</max_>
+							<initval>.2</initval>
+							<width>"6"</width>
+							<resolution>.1</resolution>
+							<format>"5.1f"</format>
+							<justify>RIGHT</justify>
+						</spinbox>
+						<spinbox>
+							<halpin>"Spin-PierceGap"</halpin>
+							<min_>0.0</min_>
+							<max_>10</max_>
+							<initval>1</initval>
+							<width>"6"</width>
+							<resolution>.1</resolution>
+							<format>"5.1f"</format>
+							<justify>RIGHT</justify>
+						</spinbox>
+						<spinbox>
+							<halpin>"Spin-PierceHeight"</halpin>
+							<min_>0.0</min_>
+							<max_>10</max_>
+							<initval>1</initval>
+							<width>"6"</width>
+							<resolution>.1</resolution>
+							<format>"5.1f"</format>
+							<justify>RIGHT</justify>
+						</spinbox>
+						<spinbox>
+							<halpin>"Spin-ArcTimeout"</halpin>
+							<min_>0.2</min_>
+							<max_>2</max_>
+							<initval>0.5</initval>
+							<width>"6"</width>
+							<resolution>.1</resolution>
+							<format>"5.1f"</format>
+							<justify>RIGHT</justify>
+						</spinbox>
+						<checkbutton>
+							<halpin>"Check-AutoStart"</halpin>
+							<initval>1</initval>
+							<bd>1</bd>
+						</checkbutton>
+						<checkbutton>
+							<halpin>"Check-NoArc"</halpin>
+							<initval>0</initval>
+							<bd>1</bd>
+						</checkbutton>
+						<checkbutton>
+							<halpin>"Check-THConly"</halpin>
+							<initval>0</initval>
+							<bd>1</bd>
+						</checkbutton>
+					</vbox>
+				</hbox>
+			</vbox>
+		</vbox>
+	</labelframe>
+	<labelframe text="Фиксир. на углах"> 
+		<vbox>
+			<hbox>
+				<vbox>
+					<led> 
+						<halpin>"Led-HeightLocked"</halpin>  
+						<size>20</size>  
+						<on_color>"green"</on_color> 
+						<off_color>"grey"</off_color> 
+					</led>
+					<checkbutton>
+						<halpin>"Check-CHLEnable"</halpin>
+						<bd>1</bd>
+					</checkbutton>
+				</vbox>
+				<vbox>
+					<label text="Locked"/> 
+					<label text="Enable"/> 
+				</vbox>
+			</hbox>
+			<vbox>
+			<relief>RIDGE</relief>
+			<bd>1</bd>
+			<label text="Уровень %"/>
+			<scale> 
+				<halpin>"Scale-CHLThreshold"</halpin> 
+				<min_>10</min_> 
+				<max_>99</max_> 
+				<initval>60</initval>
+				<resolution>1</resolution>
+				<orient>HORIZONTAL</orient>
+			</scale>
+			</vbox>
+		</vbox>
+	</labelframe>
+	<labelframe text="Отладочная информация"> 
+		<vbox>
+			<hbox>
+				<vbox>
+					<label text="Текущая скорость"/> 
+					<label text="Target Voltage"/> 
+				</vbox>
+				<vbox>
+					<number> 
+						<halpin>"Num-CurrentVelocity"</halpin> 
+						<format>"3.2f"</format> 
+					</number>
+					<spinbox>
+						<halpin>"Spin-THCTargetVoltage"</halpin>
+						<min_>1</min_>
+						<max_>255</max_>
+						<initval>100</initval>
+						<width>"3"</width>
+						<resolution>1</resolution>
+						<format>"3.0f"</format>
+						<justify>RIGHT</justify>
+					</spinbox>
+				</vbox>
+
+			</hbox>
+		</vbox>
+	</labelframe>
+
+</pyvcp>

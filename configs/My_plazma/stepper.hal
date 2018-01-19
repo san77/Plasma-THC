@@ -1,0 +1,86 @@
+############################ Step Generators #########################################
+
+# Stepper module, four step generators, all using step/dir
+# 4 оси, типа step/dir
+loadrt stepgen step_type=0,0,0
+
+# Load realtime ddt for velocity calculations used for CHL
+# загрузить 2 калькулятора производной для расчета ускорения
+loadrt ddt count=2
+
+# Hook functions to base thread (high speed thread for step generation)
+#Высокоскоростная функция для генерации и подсчета импульсов (без чисел с плавающей запятой).
+addf stepgen.make-pulses base-thread
+
+# Hook functions to servo thread
+#Медленная функция для обратной связи, обновляет положение уточнений и масштабирует положение.
+#все это нужно для серприводов поэтому оставляем как есть 
+addf stepgen.capture-position servo-thread
+addf motion-command-handler servo-thread
+addf motion-controller servo-thread
+addf stepgen.update-freq servo-thread
+addf ddt.0 servo-thread
+addf ddt.1 servo-thread
+
+
+
+# Configure signals for Z axis to be twice the size of the signals for other axis because
+# Z axis has a slo-syn driver which can't handle smaller step 
+# конфигурация сигналов оси z должна быть удвоена, от других осей
+#канал 2 для данного компонента - ось Z
+#Длинна импульса шага (тип шага 1 и 0)  минимальное время в данном положении для (типов шага 2-14)
+setp stepgen.2.steplen 35200
+# Минимальный промежуток между двумя импульсами шага (для типов шага 0 и 1) в наносекундах.
+setp stepgen.2.stepspace 35200
+#Минимальное время между изменением направления и началом следующего шага (только для типа шага 0) 
+setp stepgen.2.dirsetup 35500
+#Минимальное время от конца импульса шага до изменения направления (для типа шага 0) в наносекундах. 
+setp stepgen.2.dirhold 35500
+
+# тут похоже задаются масштабы 
+# Set stepgen module scaling - get values from ini file
+setp stepgen.0.position-scale [AXIS_0]SCALE
+setp stepgen.1.position-scale [AXIS_1]SCALE
+setp stepgen.2.position-scale [AXIS_2]SCALE
+#setp stepgen.3.position-scale [AXIS_3]SCALE
+# тут похоже задаются ускорения
+# Set stepgen module accel limits - get values from ini file
+setp stepgen.0.maxaccel [AXIS_0]STEPGEN_MAXACCEL
+setp stepgen.1.maxaccel [AXIS_1]STEPGEN_MAXACCEL
+setp stepgen.2.maxaccel [AXIS_2]STEPGEN_MAXACCEL
+#setp stepgen.3.maxaccel [AXIS_3]STEPGEN_MAXACCEL
+
+# Hook up stepgen to motion modules
+#связь модуля stepgen с модулем motions
+# очень похоже на хал сгенеренный степконвих только переменные 
+#называются не PosX-   а  xpos 
+net PosX-cmd axis.0.motor-pos-cmd => stepgen.0.position-cmd
+net PosX-fb stepgen.0.position-fb => axis.0.motor-pos-fb ddt.0.in
+net xstep <= stepgen.0.step
+net xdir <= stepgen.0.dir
+
+net PosY-cmd axis.1.motor-pos-cmd => stepgen.1.position-cmd
+net PosY-fb stepgen.1.position-fb => axis.1.motor-pos-fb ddt.1.in
+net ystep <= stepgen.1.step
+net ydir <= stepgen.1.dir
+
+# Z Axis Position and feedback signals handled by THC, see thc.hal
+# ось Z контролируется модулем THC, поэтому ниже закоменчено
+#net PosZ-cmd axis.2.motor-pos-cmd => stepgen.2.position-cmd
+#net PosZ-fb stepgen.2.position-fb => axis.2.motor-pos-fb
+
+net zstep <= stepgen.2.step
+net zdir <= stepgen.2.dir
+
+
+# ось А  - синхронна с осью y. только здесь этого не видно
+#net PosA-cmd axis.3.motor-pos-cmd => stepgen.3.position-cmd
+#net PosA-fb stepgen.3.position-fb => axis.3.motor-pos-fb
+
+# Hook up enable signals for step generators
+# разрешитьработу гегераторов stepgen если 
+# сигнал EnableX равный содержимому пина EnableX axis.0.amp-enable-out  передать в пин stepgen.0.enable
+net EnableX axis.0.amp-enable-out => stepgen.0.enable
+net EnableY axis.1.amp-enable-out => stepgen.1.enable
+net EnableZ axis.2.amp-enable-out => stepgen.2.enable
+#net EnableA axis.3.amp-enable-out => stepgen.3.enable

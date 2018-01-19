@@ -1,0 +1,354 @@
+# EMC controller parameters for a plasma controller. Make these what you need
+# for your system.
+#
+
+# General note: Comments can either be preceded with a # or ; - either is
+# acceptable, although # is in keeping with most linux config files.
+
+# Settings with a + at the front of the comment are likely needed to get 
+# changed by the user.
+#секции отмеченные занком + желательно изменить для настройки
+# Settings with a - at the front are highly unneeded to be changed
+# секции отмеченные занком - менять КРАЙНЕ НЕЖЕЛАТЕЛЬНО
+###############################################################################
+# General section 
+###############################################################################
+[EMC]
+
+#- Version of this INI file
+VERSION =	$Revision$
+
+#+ Name of machine, for use with display, etc.
+MACHINE =	LinuxCNC-MegoPLASMA-THC
+
+#+ Debug level, 0 means no messages. See src/emc/nml_int/emcglb.h for others
+DEBUG =		1
+
+
+# включить режим адаптивной обратной связи для ТНС Enable Adaptive Feedrate for THC 
+# использовано для задержки исполеннеия g-кода для настроки Used to pause execution of gcode for setup,
+# задержка дуги и ручная проверка высоты pierce delay and manual verification of pierce height
+# Set spindle speed to 1
+# Set up to use metric 
+#Строка NC кодов, с которыми интерпретатор будет инициализирован. 
+#Это не замена определения модальных Gкодов вверху каждого ngc файла потому, 
+#что модальные коды станка отличаются и могут быть изменены Gкодом интерпретированными ранее в текущей сессии. 
+RS274NGC_STARTUP_CODE =	M52 P1 G21 S1
+
+###############################################################################
+# Раздел DISPLAY
+# Разные пользовательские интерфейсы используют разные опции, и не каждая опция поддерживается каждым интерфейсом. 
+# Два основных интерфейса - Axis и Touchy. 
+# Axis - интерфейс для использования с нормальным компьютером и монитором, Touchy для использования с сенсорным экраном (тачскрином). 
+# Описания интерфейсов находятся в разделе Интерфейсы Руководства Пользователя.
+###############################################################################
+[DISPLAY]
+
+# Plasma Control Panel
+# Файл описания панели pyVCP. См. раздел pyVCP для более подробной информации.
+PYVCP =			thc_vcp.xml
+
+#+ Name of display program, e.g., axis,touchy,keystick,mini,tkemc,xemc
+DISPLAY =		axis 
+
+
+# Время цикла в секундах, которое дисплей будет ожидать между опросами.
+CYCLE_TIME =		0.200
+
+#- Path to help file
+HELP_FILE = 		doc/help.txt
+#HELP_FILE =		tklinucnc.txt
+
+#- Initial display setting for position, RELATIVE or MACHINE
+#Отображаемая система координат (RELATIVE or MACHINE Относительная или Машинная), 
+#когда запускается пользовательский интерфейс. Система координат RELATIVE отражает действующие G92 и G5x 
+#отступы системы координат.
+POSITION_OFFSET =	RELATIVE
+
+#- Initial display setting for position, COMMANDED or ACTUAL
+#Отображаемые значения координат (COMMANDED or ACTUAL Заданное или Реальное) после запуска интерфейса. 
+#Положение COMMANDED это идеальное положение запрошенное EMC. Положение ACTUAL это позиция из обратной связи от моторов.
+POSITION_FEEDBACK =	ACTUAL
+
+# Установка качества просмотра дуг. В просмотре дуги отображаются при помощи множества прямых линий; 
+# полуокружность разделяется на ARCDIVISION частей. Большие значения дают более точный просмотр, но 
+# требуют больше времени для загрузки и в итоге дает более дерганный просмотр. 
+# Меньшие значения дают менее точный просмотр, но занимают меньше времени для загрузки и в итоге дает более быстрый просмотр. 
+# Значение по умолчанию 64 значит, что круг до 3 дюймов будет отображен с погрешностью 1 мил (1/1000 дюйма) (0.03%).
+ARCDIVISION = 64
+
+#===============
+GRIDS = 10mm 20mm 50mm 100mm 1in 2in 5in 10in
+#============================================
+#+ Highest value that will be allowed for feed override, 1.0 = 100%
+#Максимальное значение замещения подачи, которое пользователь может выбрать. 
+#1.2 значит 120% от запрограммированной подачи.
+MAX_FEED_OVERRIDE =	2
+#----------------------------                
+
+#- Prefix to be used
+#Расположение по умолчанию Gcode файлов и определяемых пользователем M-кодов.
+PROGRAM_PREFIX = ~/linuxcnc/nc_files
+
+#- Text Editor
+EDITOR = 		gedit
+# файл который будет загружен при старте AXIS. Используйте пустую строку "" и никакого файла не будет загружено. full/path/to/file.ngc
+OPEN_FILE=""
+#===тут блок из степгена===
+#Скорость линейных перемещений (jog) по умолчанию, в единицах измерения станка в секунду.
+DEFAULT_LINEAR_VELOCITY = 6.75
+#Приблизительное минимальное значение для jog ползунка
+MIN_LINEAR_VELOCITY = 0
+#Максимальная скорость линейных перемещений (jog), в единицах измерения станка в секунду.
+MAX_LINEAR_VELOCITY = 67.50
+#===========================
+
+#- Introductory graphic
+INTRO_GRAPHIC =		linuxcnc.gif
+INTRO_TIME =		3
+
+#Increments for the JOB Section
+# Задает шаги приращений доступные при пошаговом ручном управлении. INCREMENTS могут быть использованы 
+# для перезаписи значений по умолчанию. Значения могут быть десятичными дробями (т.е. 0.1000) 
+# или обычными дробями (т.е. 1/16), опционально, могут быть добавлены единицы измерения (cm, mm, um, inch, in or mil). 
+# Если елиница измерения не указана подразумевается единица измерения станка. 
+# Метрическая или дюймовая системы счисления могут быть смешаны: INCREMENTS = 1 inch, 1 mil, 1 cm, 1 mm, 1 um является допустимым значением.
+
+INCREMENTS =	1000 10 1 0.1 0.01
+
+###############################################################################
+# Task controller section (Ничего не менять!!!)
+###############################################################################
+[TASK]
+
+#- Name of task controller program, e.g., bridgeporttask
+TASK =			milltask
+
+#- Cycle time, in seconds, that task controller will sleep between polls
+CYCLE_TIME =		0.100
+#----------------------------
+###############################################################################
+# Part program interpreter section 
+###############################################################################
+[RS274NGC]
+
+#- File containing interpreter variables
+# Файл который содержит параметры, использующиеся интерпретатором (сохраненные между запусками).
+PARAMETER_FILE =	plasma.var
+
+###############################################################################
+# Motion control section 
+###############################################################################
+[EMCMOT]
+
+#- Name of the motion controller to use (only one exists for nontrivkins)
+EMCMOT =		motmod
+
+#- Timeout for comm to emcmot, in seconds
+COMM_TIMEOUT =		1.0
+
+#- Interval between tries to emcmot, in seconds
+COMM_WAIT =		0.010
+
+#+ "Base" (базовый) период задачи,в наносекундах - это самый быстрый поток в машине. 
+#Base task period, in nanosecs - this is the fastest thread in the machine
+
+BASE_PERIOD =		100000
+#----------------------------
+
+#- Servo task period, in nanosecs - will be rounded to an int multiple of BASE_PERIOD
+
+SERVO_PERIOD =		1000000
+#------------------------------
+
+#- Trajectory Planner task period, in nanosecs - will be rounded to an
+#   integer multiple of SERVO_PERIOD
+TRAJ_PERIOD =		1000000
+#-----------------------------
+
+###############################################################################
+# Hardware Abstraction Layer section
+###############################################################################
+[HAL]
+
+# The run script first uses halcmd to execute any HALFILE
+# files, and then to execute any individual HALCMD commands.
+# здесь запускаются файлы HAL в любой последовательности
+
+# HALUI to interact with NML
+# Run before any other HALFILE
+HALUI =			halui
+
+# list of hal config files to run through halcmd
+#+ files are executed in the order in which they appear
+# какой-то файл для портала почему-то 4 оси
+HALFILE =		kinematics.hal
+# управление шаговиками разобраться!
+HALFILE =		stepper.hal
+#пока пусто, должно быть подключение и настройка портов разобраться!
+HALFILE =		stepper_parport.hal
+#подключения сигнала "аварийный стоп"
+HALFILE =		estop.hal
+#логика контроля высоты
+HALFILE =		thc.hal
+#интерфейс смены инструмента
+#HALFILE =		axis_manualtoolchange.hal
+#имитатор сингалов thc вилимо для демонстрации
+#HALFILE =		simulator.hal
+#+++++++++++++++++++++++++++++++++++++
+
+# A file to hook pyvcp to hal signals
+#связь между объектами VCP и сигналами 
+POSTGUI_HALFILE =	thc_vcp.hal
+
+#- list of halcmd commands to execute
+# commands are executed in the order in which they appear
+#HALCMD =		save neta
+
+###############################################################################
+# Trajectory planner section
+# Раздел [TRAJ] содержит общие параметры для модуля планировки траектории в EMCMOT.
+###############################################################################
+[TRAJ]
+#+ machine specific settings
+#+++++++++++++++++++++++++++
+AXES =			3
+COORDINATES =		X Y Z 
+LINEAR_UNITS =		mm
+#==========================
+ANGULAR_UNITS =         degree
+#=============================
+#DEFAULT_VELOCITY =	100
+DEFAULT_VELOCITY =	6.75
+#MAX_VELOCITY =		180
+MAX_VELOCITY =		67.5
+# тут чего-то многовато....
+# оставлю пока как есть 
+#DEFAULT_ACCELERATION =	600
+#MAX_ACCELERATION =	2400
+NO_FORCE_HOMING=1
+#POSITION_FILE =		last_position.txt
+
+###############################################################################
+# Axes sections
+###############################################################################
+
+#+ First axis (X)
+#++++++++++++++++++++
+[AXIS_0]
+NAME=X
+# тут все из степконфиг
+TYPE = LINEAR
+HOME = 0.0
+MAX_VELOCITY = 65.0
+MAX_ACCELERATION = 350.0
+STEPGEN_MAXACCEL = 437.5
+SCALE = 52.4265586813
+FERROR = 1
+MIN_FERROR = .25
+MIN_LIMIT = -1300
+MAX_LIMIT = 0
+HOME_OFFSET = 00.000000
+HOME_SEARCH_VEL = 14.000000
+HOME_LATCH_VEL = -7.000000
+HOME_IGNORE_LIMITS = YES
+HOME_SEQUENCE = 1
+
+#это было в плазме
+BACKLASH =			0.000
+
+
+#+ Second axis (Y)
+#+++++++++++++++++
+[AXIS_1]
+# из степконфиг
+TYPE = LINEAR
+HOME = 0.0
+MAX_VELOCITY = 50
+MAX_ACCELERATION = 110.0
+STEPGEN_MAXACCEL = 137.5
+SCALE = 41.9109287986
+FERROR = 1
+MIN_FERROR = .25
+MIN_LIMIT = -1300
+MAX_LIMIT = 0
+HOME_OFFSET =0.000000
+HOME_SEARCH_VEL = 12.000000
+HOME_LATCH_VEL = -5.968909
+HOME_IGNORE_LIMITS = YES
+HOME_SEQUENCE = 1
+	
+BACKLASH =			0.000
+
+#+ Third axis (Z)
+#++++++++++++++++++++++++++++++++
+[AXIS_2]
+
+HOME = 0
+MAX_VELOCITY = 7.6
+MAX_ACCELERATION = 100.0
+STEPGEN_MAXACCEL = 125.0
+
+BACKLASH =			0.000
+
+SCALE = 1280
+OUTPUT_SCALE =			1.000
+MIN_LIMIT = -56.0
+MAX_LIMIT = 10.0
+FERROR =			1
+#MIN_FERROR =			0.254
+# This is done so Z axis can be operated with a HAL closed loop (plasma THC) заремлено ниже
+MIN_FERROR =			500
+
+HOME_OFFSET =			2
+HOME_SEARCH_VEL = 2.500000
+HOME_LATCH_VEL = -0.500000
+HOME_USE_INDEX =		NO
+HOME_IGNORE_LIMITS =		YES
+HOME_SEQUENCE =			0
+
+
+
+###############################################################################
+# section for main IO controller parameters 
+###############################################################################
+[EMCIO]
+
+#- Name of IO controller program, e.g., io
+EMCIO = 		io
+
+#- Cycle time, in seconds
+CYCLE_TIME =            0.100
+
+#- Tool table file, torches and consumables
+TOOL_TABLE =            torches.tbl
+
+#+ Tool Change Position, if this is set the torch will move the the specified position before requesting a tool change
+#позиция смены инструмента
+TOOL_CHANGE_POSITION = 590 890 37
+#++++++++++++++++++++++++++++++
+
+#секция для плазморезки
+# похоже это значения перменных 
+[PLASMA]
+# Note that setting Ignition timeout to high can cause issues with very short cuts, problems can arrise
+# when the timeout has not expired and starting to cut a new part
+
+#- Ignition fault timeout, the time allwed from TorchOn untill ArcOK before re-probing and re-initiating, in seconds
+# таймаут между сигналом вкоючть плазмуTorchOn и появлением сигнала ArcOK
+IGNITION_TIMEOUT = 3
+
+#- ArcOK timeout, a filter, for a signal to be valid it needs to exceed the specified time period, in seconds
+# таймаут видимо для отсекания помех в синале ArcOK
+ARC_OK_FILTER_TIME = 0.2
+
+#- Ignition Retries before abort, the number of attempts to re-probe and start the torch before estop
+#количество попыток зажечь дугу перед генерацией ошибки
+MAX_FAILED_IGNITIONS = 5
+
+#- Extinguish Timeout, a grace period after loosing ArcOK before shutting off the torch and re-probing, in seconds
+# задержка после пропадания сигнала ArcOK для отключения горелки и попытки найти 0
+EXTINGUISH_TIMEOUT = 0.2
+
+#FL_POINT_SHIFT компенсатор гистерезиса смещения при поиске 0 горелкой об металл
+FL_POINT_SHIFT = 5.7
